@@ -24,5 +24,6 @@
             <p>data tidak boleh kosong</p>
         @endforelse
     </div>
+    {{ $matakuliahs->links() }}
 </body>
 </html>
