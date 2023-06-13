@@ -34,7 +34,7 @@ USER root
 RUN mkdir -p /var/www/.composer/cache/files/ && chown -R www-data:www-data /var/www/.composer
 RUN mkdir -p /var/www/vendor && chown -R www-data:www-data /var/www/vendor
 
-# Change current user to www
+# Change current user to www-data
 USER www-data
 
 # Run composer install to install the dependencies
@@ -58,13 +58,21 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Enable mod_rewrite
 RUN a2enmod rewrite
 
+# Change permission of storage
+RUN chown -R www-data:www-data /var/www && chmod -R 775 /var/www
+
 RUN chown -R www-data:www-data /var/www/public && chmod -R 755 /var/www/public
+
 RUN chmod +x start.sh
+
 # Update the default apache site with the config we created.
 ADD apache-config.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Expose port 8080
 EXPOSE 8080
+
+# Change user to www-data
+USER www-data:www-data
 
 # Start the server
 # CMD php artisan migrate; php artisan db:seed; apache2-foreground;
